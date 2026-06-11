@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from fastapi import Path , HTTPException ,Query
+from fastapi import Path , HTTPException ,Query , status
 from pydantic import BaseModel
 
 app = FastAPI()
@@ -47,7 +47,7 @@ class Student(BaseModel):
     course: str = "Data Science"  # default value for course is set to "Data Science"
     cgpa: float
     
-@app.post("/add_student")
+@app.post("/add_student",status_code=status.HTTP_201_CREATED)
 def add_student(Student: Student):
     student = dict(Student)
     student_id = len(students) + 1
