@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from fastapi import Path , HTTPException ,Query , status
 from pydantic import BaseModel
+from fastapi.responses import JSONResponse
 
 app = FastAPI()
 
@@ -21,10 +22,10 @@ class StudentResponse(BaseModel):
     course: str
     #cgpa: float
 
-@app.get("/get_students/{student_id}", response_model=StudentResponse)
+@app.get("/get_students/{student_id}")
 def get_students(student_id: int = Path(..., description="The ID of the student to retrieve", example=1)):
     if student_id in students:
-        return students[student_id]
+        return JSONResponse(status_code = status.HTTP_200_OK, content=StudentResponse(**students[student_id]).dict())
     raise HTTPException(status_code=404, detail=f"Student with ID {student_id} not found")
 
 @app.get("/get_students")
@@ -47,12 +48,12 @@ class Student(BaseModel):
     course: str = "Data Science"  # default value for course is set to "Data Science"
     cgpa: float
     
-@app.post("/add_student",status_code=status.HTTP_201_CREATED)
+@app.post("/add_student")
 def add_student(Student: Student):
     student = dict(Student)
     student_id = len(students) + 1
     students[student_id] = student
-    return {"message": f"Student added successfully!", "student_id": student_id}
+    return JSONResponse(status_code = status.HTTP_201_CREATED, content={"message": f"Student added successfully!", "student_id": student_id})
 
 @app.delete("/delete_student/{student_id}")
 def delete_student(student_id: int = Path(..., description="The ID of the student to delete", example=1)):
