@@ -22,13 +22,13 @@ class StudentResponse(BaseModel):
     course: str
     #cgpa: float
 
-@app.get("/get_students/{student_id}")
+@app.get("/get_students/{student_id}",summary = "Get a student by ID", description="Retrieve a student's details by their unique ID.")
 def get_students(student_id: int = Path(..., description="The ID of the student to retrieve", example=1)):
     if student_id in students:
         return JSONResponse(status_code = status.HTTP_200_OK, content=StudentResponse(**students[student_id]).dict())
     raise HTTPException(status_code=404, detail=f"Student with ID {student_id} not found")
 
-@app.get("/get_students")
+@app.get("/get_students",summary = "Get all students with sorting options", description="Retrieve a list of all students with optional sorting by name, age, course, or cgpa in ascending or descending order.")
 def query_st(sort_by: str = Query(default="cgpa", description="The field to sort students by"),
               order: str = Query(default="desc", description="The order to sort students (asc or desc)")):
     
@@ -48,16 +48,16 @@ class Student(BaseModel):
     course: str = "Data Science"  # default value for course is set to "Data Science"
     cgpa: float
     
-@app.post("/add_student")
+@app.post("/add_student",summary = "Add a new student", description="Add a new student to the database with their name, age, course, and cgpa.")
 def add_student(Student: Student):
     student = dict(Student)
     student_id = len(students) + 1
     students[student_id] = student
     return JSONResponse(status_code = status.HTTP_201_CREATED, content={"message": f"Student added successfully!", "student_id": student_id})
 
-@app.delete("/delete_student/{student_id}")
+@app.delete("/delete_student/{student_id}",summary = "Delete a student", description="Delete a student from the database by their unique ID.")
 def delete_student(student_id: int = Path(..., description="The ID of the student to delete", example=1)):
     if student_id in students:
         del students[student_id]
-        return {"message": f"Student '{student_id}' removed successfully!"}
+        return JSONResponse(status_code = status.HTTP_200_OK, content={"message": f"Student '{student_id}' removed successfully!"})
     raise HTTPException(status_code=404, detail=f"Student with ID {student_id} not found")
