@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from fastapi import Path , HTTPException ,Query , status
+from fastapi import Path , HTTPException ,Query , status , Depends
 from pydantic import BaseModel
 from fastapi.responses import JSONResponse
 
@@ -12,14 +12,17 @@ students = dict({1: {"name": "Harsh", "age": 20, "course": "python","cgpa": 9.5}
                  5: {"name": "Sahil", "age": 20, "course": "Data Science","cgpa": 8.7}})
 
 # Custom Exception
-
 def student_not_found(student_id: int):
     raise HTTPException(status_code=404, detail=f"Student with ID {student_id} not found")
 
 def order_not_valid():
     raise HTTPException(status_code=400, detail=f"Invalid order. Must be 'asc' or 'desc'.")
-# main page 
 
+# Dependency injection
+def verify_token():
+    print("token is verified")
+
+# main page 
 @app.get("/")
 def home():
     return {"message": "Welcome to the Student Course API!"}
@@ -32,7 +35,7 @@ class StudentResponse(BaseModel):
     #cgpa: float
 
 @app.get("/get_students/{student_id}",summary = "Get a student by ID", description="Retrieve a student's details by their unique ID.")
-def get_students(student_id: int = Path(..., description="The ID of the student to retrieve", example=1)):
+def get_students(student_id: int = Path(..., description="The ID of the student to retrieve", example=1),auth: str = Depends(verify_token)):
     if student_id in students:
         return JSONResponse(status_code = status.HTTP_200_OK, content=StudentResponse(**students[student_id]).dict())
     student_not_found(student_id)
