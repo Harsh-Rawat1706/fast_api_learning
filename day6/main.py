@@ -5,9 +5,11 @@ from typing import Optional , Annotated , Literal
 from routers.students import stud
 from  routers.courses import cours
 from routers.teachers import teach
-
+from middleware.logger import log_request_time
 app = FastAPI()
 
+
+app.middleware("http")(log_request_time)
 
 @app.get("/")
 def home():
