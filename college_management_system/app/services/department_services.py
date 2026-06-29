@@ -42,3 +42,22 @@ def get_departments(db: Session):
     return db.execute(
         select(Department)
     ).scalars().all()
+    
+def get_department_by_code(
+    db: Session,
+    department_code: str,
+):
+
+    department = db.execute(
+        select(Department).where(
+            Department.code == department_code
+        )
+    ).scalar_one_or_none()
+
+    if not department:
+        raise HTTPException(
+            status_code=404,
+            detail="Department not found."
+        )
+
+    return department
