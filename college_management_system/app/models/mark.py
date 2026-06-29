@@ -1,13 +1,11 @@
-from datetime import date, datetime
-from enum import Enum
+from datetime import datetime
 from uuid import UUID
 
 from sqlalchemy import (
-    Date,
     DateTime,
-    Enum as SQLEnum,
     ForeignKey,
-    UniqueConstraint,
+    Integer,
+    CheckConstraint,
     func,
     text,
 )
@@ -16,19 +14,13 @@ from sqlalchemy.orm import Mapped, mapped_column
 from app.db.database import Base
 
 
-class AttendanceStatus(str, Enum):
-    PRESENT = "present"
-    ABSENT = "absent"
-
-
-class Attendance(Base):
-    __tablename__ = "attendence"
+class Marks(Base):
+    __tablename__ = "marks"
 
     __table_args__ = (
-        UniqueConstraint(
-            "enrollement_id",
-            "attendence_date",
-            name="uq_attendance_per_day",
+        CheckConstraint(
+            "marks BETWEEN 0 AND 100",
+            name="ck_marks_range",
         ),
     )
 
@@ -42,16 +34,8 @@ class Attendance(Base):
         nullable=False,
     )
 
-    attendence_date: Mapped[date] = mapped_column(
-        Date,
-        nullable=False,
-    )
-
-    is_present: Mapped[AttendanceStatus] = mapped_column(
-        SQLEnum(
-            AttendanceStatus,
-            name="present",
-        ),
+    marks: Mapped[int] = mapped_column(
+        Integer,
         nullable=False,
     )
 
