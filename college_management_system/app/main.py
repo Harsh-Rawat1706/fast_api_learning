@@ -2,6 +2,7 @@ from fastapi import FastAPI
 
 from app.routers.department import router as department_router
 from app.routers.user import router as user_router
+from app.routers.student import router as student_router
 
 app = FastAPI(
     title="College Management API",
@@ -10,3 +11,4 @@ app = FastAPI(
 
 app.include_router(department_router)
 app.include_router(user_router)
+app.include_router(student_router)

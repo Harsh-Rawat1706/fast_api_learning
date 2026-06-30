@@ -1,6 +1,7 @@
 from datetime import datetime
 from enum import Enum
 from uuid import UUID
+from sqlalchemy import Enum as SQLEnum
 
 from sqlalchemy import Boolean, DateTime, Enum as SQLEnum, String, func, text
 from sqlalchemy.orm import Mapped, mapped_column
@@ -9,10 +10,9 @@ from app.db.database import Base
 
 
 class UserRole(str, Enum):
-    ADMIN = "ADMIN"
-    TEACHER = "TEACHER"
-    STUDENT = "STUDENT"
-
+    ADMIN = "admin"
+    TEACHER = "teacher"
+    STUDENT = "student"
 
 class User(Base):
     __tablename__ = "users"
@@ -34,7 +34,11 @@ class User(Base):
     )
 
     role: Mapped[UserRole] = mapped_column(
-        SQLEnum(UserRole, name="user_role"),
+        SQLEnum(
+            UserRole,
+            name="user_role",
+            values_callable=lambda enum: [e.value for e in enum],
+        ),
         nullable=False,
     )
 
