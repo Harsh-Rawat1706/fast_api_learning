@@ -17,11 +17,13 @@ class Teacher(Base):
 
     user_id: Mapped[UUID] = mapped_column(
         ForeignKey("users.id"),
-        unique=True
+        unique=True,
+        nullable=False
     )
 
     department_id: Mapped[UUID] = mapped_column(
-        ForeignKey("departments.id")
+        ForeignKey("departments.id"),
+        nullable=False
     )
 
     employee_code: Mapped[str] = mapped_column(
@@ -31,14 +33,17 @@ class Teacher(Base):
     )
 
     hire_date: Mapped[date | None] = mapped_column(
-        Date
+        Date,
+        nullable=True
     )
 
     phone: Mapped[str | None] = mapped_column(
-        String(15)
+        String(15),
+        nullable=True
     )
 
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
-        server_default=func.now()
+        server_default=func.now(),
+        nullable=False
     )

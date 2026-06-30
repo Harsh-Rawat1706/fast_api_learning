@@ -49,3 +49,9 @@ def create_student(
         )
 
     return new_student
+
+
+def get_students(db: Session):
+    return db.execute(
+        select(Student)
+    ).scalars().all()

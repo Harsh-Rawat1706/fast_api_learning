@@ -11,6 +11,7 @@ from app.schemas.student import (
 )
 from app.services.student_services import (
     create_student,
+    get_students,
 )
 router = APIRouter(
     prefix="/students",
@@ -28,3 +29,13 @@ def create_student_api(
     db: Session = Depends(get_db),
 ):
     return create_student(db, student)
+
+@router.get(
+    "",
+    response_model=list[StudentResponse],
+)
+def get_students_api(
+    db: Session = Depends(get_db),
+):
+    # Implementation for fetching all students
+    return get_students(db)
