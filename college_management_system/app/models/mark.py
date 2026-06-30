@@ -9,10 +9,12 @@ from sqlalchemy import (
     func,
     text,
 )
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.database import Base
-
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from app.models.enrollement import Enrollment
 
 class Marks(Base):
     __tablename__ = "marks"
@@ -33,7 +35,10 @@ class Marks(Base):
         ForeignKey("enrollement.id"),
         nullable=False,
     )
-
+    
+    enrollment: Mapped["Enrollment"] = relationship(
+    back_populates="marks"
+    )
     marks: Mapped[int] = mapped_column(
         Integer,
         nullable=False,

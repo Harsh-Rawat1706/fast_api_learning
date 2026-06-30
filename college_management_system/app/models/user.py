@@ -4,11 +4,15 @@ from uuid import UUID
 from sqlalchemy import Enum as SQLEnum
 
 from sqlalchemy import Boolean, DateTime, Enum as SQLEnum, String, func, text
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column , relationship
 
 from app.db.database import Base
 
+from typing import TYPE_CHECKING
 
+if TYPE_CHECKING:
+    from app.models.teacher import Teacher
+    
 class UserRole(str, Enum):
     ADMIN = "admin"
     TEACHER = "teacher"
@@ -58,4 +62,9 @@ class User(Base):
         DateTime(timezone=True),
         server_default=func.now(),
         nullable=False,
+    )
+    
+    teacher: Mapped["Teacher"] = relationship(
+    back_populates="user",
+    uselist=False,
     )

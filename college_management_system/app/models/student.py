@@ -10,11 +10,14 @@ from sqlalchemy import (
     func,
     text,
 )
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column,relationship
 
 from app.db.database import Base
 
-
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from app.models.department import Department
+    from app.models.enrollement import Enrollment
 class Student(Base):
 
     __tablename__ = "students"
@@ -32,7 +35,11 @@ class Student(Base):
     department_id: Mapped[UUID] = mapped_column(
         ForeignKey("departments.id"),
     )
-
+    
+    department: Mapped["Department"] = relationship(
+    back_populates="students"
+    )
+    
     roll_number: Mapped[str] = mapped_column(
         String(15),
         unique=True,
@@ -58,4 +65,8 @@ class Student(Base):
         DateTime(timezone=True),
         server_default=func.now(),
         nullable=False,
+    )
+    
+    enrollments: Mapped[list["Enrollment"]] = relationship(
+    back_populates="student"
     )
