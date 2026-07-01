@@ -4,6 +4,8 @@ from fastapi import HTTPException, status
 from sqlalchemy import or_, select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
+from sqlalchemy.orm import joinedload
+from sqlalchemy.orm import selectinload
 
 from app.models.teacher import Teacher
 from app.schemas.teacher import TeacherCreate, TeacherUpdate
@@ -54,7 +56,7 @@ def create_teacher(
 
 def get_teachers(db: Session):
     return db.execute(
-        select(Teacher)
+        select(Teacher).options(selectinload(Teacher.department))
     ).scalars().all()
 
 
@@ -63,7 +65,7 @@ def get_teacher_by_id(
     teacher_id: UUID,
 ):
     teacher = db.execute(
-        select(Teacher).where(
+        select(Teacher).options(joinedload(Teacher.department)).where(
             Teacher.id == teacher_id
         )
     ).scalar_one_or_none()
