@@ -74,7 +74,7 @@ def get_teacher_by_id(
             detail="Teacher not found.",
         )
 
-    return teacher
+    return teacher.department.name
 
 
 def update_teacher(

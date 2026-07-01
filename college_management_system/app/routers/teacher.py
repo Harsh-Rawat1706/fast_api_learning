@@ -47,7 +47,7 @@ def get_teachers_api(
 
 @router.get(
     "/{teacher_id}",
-    response_model=TeacherResponse,
+    response_model=str,
 )
 def get_teacher_by_id_api(
     teacher_id: UUID,

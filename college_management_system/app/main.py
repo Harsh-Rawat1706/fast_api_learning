@@ -1,5 +1,7 @@
 from fastapi import FastAPI
 
+import app.models
+
 from app.routers.department import router as department_router
 from app.routers.user import router as user_router
 from app.routers.student import router as student_router
