@@ -11,26 +11,24 @@ def create_department(
     db: Session,
     department: DepartmentCreate,
 ):
-
-    existing_department = db.execute(
-        select(Department).where(
-            Department.code == department.code
-        )
-    ).scalar_one_or_none()
-
-    if existing_department:
-        raise HTTPException(
-            status_code=400,
-            detail="Department code already exists."
-        )
-
-    new_department = Department(
-        name=department.name,
-        code=department.code,
-    )
-
     try:
         with db.begin():
+            existing_department = db.execute(
+                select(Department).where(
+                    Department.code == department.code
+                )
+            ).scalar_one_or_none()
+
+            if existing_department:
+                raise HTTPException(
+                    status_code=400,
+                    detail="Department code already exists."
+                )
+
+            new_department = Department(
+                name=department.name,
+                code=department.code,
+            )
             db.add(new_department)
         db.refresh(new_department)
     except IntegrityError:

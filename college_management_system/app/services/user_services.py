@@ -13,35 +13,41 @@ def create_user(
     db: Session,
     user: UserCreate,
 ):
-    existing_user = db.execute(
-        select(User).where(
-            User.email == user.email
-        )
-    ).scalar_one_or_none()
-
-    if existing_user:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Email already exists.",
-        )
-
-    new_user = User(
-        email=user.email,
-        password_hash=user.password_hash,
-        role=user.role,
-    )
 
     try:
+
         with db.begin():
+
+            existing_user = db.execute(
+                select(User).where(
+                    User.email == user.email
+                )
+            ).scalar_one_or_none()
+
+            if existing_user:
+                raise HTTPException(
+                    status_code=400,
+                    detail="Email already exists."
+                )
+
+            new_user = User(
+                email=user.email,
+                password_hash=user.password_hash,
+                role=user.role,
+            )
+
             db.add(new_user)
+
         db.refresh(new_user)
-        
+
+        return new_user
+
     except IntegrityError:
+
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Database constraint violated.",
+            status_code=400,
+            detail="Database constraint violated."
         )
-    return new_user
 
 
 def get_users(db: Session):

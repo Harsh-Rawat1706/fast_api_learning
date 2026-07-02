@@ -15,33 +15,33 @@ def create_teacher(
     db: Session,
     teacher: TeacherCreate,
 ):
-    existing_teacher = db.execute(
-        select(Teacher).where(
-            or_(
-                Teacher.employee_code == teacher.employee_code,
-                Teacher.user_id == teacher.user_id,
-            )
-        )
-    ).scalar_one_or_none()
-
-    if existing_teacher:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Teacher already exists.",
-        )
-
-    new_teacher = Teacher(
-        user_id=teacher.user_id,
-        department_id=teacher.department_id,
-        employee_code=teacher.employee_code,
-        hire_date=teacher.hire_date,
-        phone=teacher.phone,
-    )
-
     try:
         with db.begin():
+            existing_teacher = db.execute(
+                select(Teacher).where(
+                    or_(
+                        Teacher.employee_code == teacher.employee_code,
+                        Teacher.user_id == teacher.user_id,
+                    )
+                )
+            ).scalar_one_or_none()
+
+            if existing_teacher:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="Teacher already exists.",
+                )
+
+            new_teacher = Teacher(
+                user_id=teacher.user_id,
+                department_id=teacher.department_id,
+                employee_code=teacher.employee_code,
+                hire_date=teacher.hire_date,
+                phone=teacher.phone,
+            )
             db.add(new_teacher)
         db.refresh(new_teacher)
+        
     except IntegrityError:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
