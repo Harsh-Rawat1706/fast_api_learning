@@ -3,7 +3,8 @@ from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field
 
-
+from app.schemas.user import UserSimple
+from app.schemas.department import DepartmentSimple
 class TeacherCreate(BaseModel):
     user_id: UUID
     department_id: UUID
@@ -35,9 +36,9 @@ class TeacherResponse(BaseModel):
     )
 
     id: UUID
-    user_id: UUID
-    department_id: UUID
     employee_code: str
     hire_date: date | None
     phone: str | None
     created_at: datetime
+    user: UserSimple
+    department: DepartmentSimple

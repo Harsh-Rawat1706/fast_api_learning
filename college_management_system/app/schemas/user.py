@@ -31,3 +31,16 @@ class UserResponse(BaseModel):
     is_active: bool
     created_at: datetime
     updated_at: datetime
+    
+class UserSimple(BaseModel):
+    model_config = ConfigDict(
+        from_attributes=True
+    )
+
+    id: UUID
+
+    email: str
+
+    role: UserRole
+
+    is_active: bool

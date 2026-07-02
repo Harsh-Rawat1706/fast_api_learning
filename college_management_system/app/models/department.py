@@ -46,3 +46,5 @@ class Department(Base):
     courses: Mapped[list["Course"]] = relationship(
     back_populates="department"
     )
+    
+

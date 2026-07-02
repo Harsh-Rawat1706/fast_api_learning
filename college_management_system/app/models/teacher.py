@@ -13,6 +13,9 @@ if TYPE_CHECKING:
     from app.models.department import Department
     from app.models.user import User
     from app.models.course import Course
+    
+    
+
 class Teacher(Base):
     __tablename__ = "teachers"
 

@@ -56,7 +56,7 @@ def create_teacher(
 
 def get_teachers(db: Session):
     return db.execute(
-        select(Teacher).options(selectinload(Teacher.department))
+        select(Teacher).options(selectinload(Teacher.department), selectinload(Teacher.user))
     ).scalars().all()
 
 
@@ -65,7 +65,7 @@ def get_teacher_by_id(
     teacher_id: UUID,
 ):
     teacher = db.execute(
-        select(Teacher).options(joinedload(Teacher.department)).where(
+        select(Teacher).options(joinedload(Teacher.department), joinedload(Teacher.user)).where(
             Teacher.id == teacher_id
         )
     ).scalar_one_or_none()
@@ -75,8 +75,7 @@ def get_teacher_by_id(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Teacher not found.",
         )
-
-    return teacher.department.name
+    return teacher
 
 
 def update_teacher(

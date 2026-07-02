@@ -36,18 +36,8 @@ def create_teacher_api(
 
 
 @router.get(
-    "",
-    response_model=list[TeacherResponse],
-)
-def get_teachers_api(
-    db: Session = Depends(get_db),
-):
-    return get_teachers(db)
-
-
-@router.get(
     "/{teacher_id}",
-    response_model=str,
+    response_model=TeacherResponse,
 )
 def get_teacher_by_id_api(
     teacher_id: UUID,
