@@ -4,6 +4,7 @@ from sqlalchemy.orm import Session
 
 from app.models.department import Department
 from app.schemas.department import DepartmentCreate
+from sqlalchemy.exc import IntegrityError
 
 
 def create_department(
@@ -28,12 +29,15 @@ def create_department(
         code=department.code,
     )
 
-    db.add(new_department)
-
-    db.commit()
-
-    db.refresh(new_department)
-
+    try:
+        with db.begin():
+            db.add(new_department)
+        db.refresh(new_department)
+    except IntegrityError:
+        raise HTTPException(
+            status_code=400,
+            detail="Database constraint violated."
+        )
     return new_department
 
 

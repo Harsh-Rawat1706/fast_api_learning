@@ -36,13 +36,11 @@ def create_student(
     )
 
     try:
-        db.add(new_student)
-        db.commit()
+        with db.add():
+            db.add(new_student)
         db.refresh(new_student)
 
     except IntegrityError:
-        db.rollback()
-
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Database constraint violated.",

@@ -32,18 +32,15 @@ def create_user(
     )
 
     try:
-        db.add(new_user)
-        db.commit()
+        with db.begin():
+            db.add(new_user)
         db.refresh(new_user)
-
+        
     except IntegrityError:
-        db.rollback()
-
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Database constraint violated.",
         )
-
     return new_user
 
 

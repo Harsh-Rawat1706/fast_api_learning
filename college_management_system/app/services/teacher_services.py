@@ -39,18 +39,15 @@ def create_teacher(
     )
 
     try:
-        db.add(new_teacher)
-        db.commit()
+        with db.begin():
+            db.add(new_teacher)
         db.refresh(new_teacher)
-
     except IntegrityError:
-        db.rollback()
-
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Database constraint violated.",
         )
-
+        
     return new_teacher
 
 
